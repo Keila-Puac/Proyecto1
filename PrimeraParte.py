@@ -7,6 +7,7 @@
 lista_estudiantes = {}
 lista_docentes = {}
 lista_cursos = {}
+
 #lista_cursos = {"Código Curso":{"Nombre Curso":"Instructor"}}
 
 class Registrar:
@@ -35,7 +36,7 @@ class Registrar:
             print("Los valores ingresados son incorrectos")
 
 
-#Inscribir a estudiantes en cursos
+#Cursos
 
 class Cursos:
     def __init__(self, nombre_curso, código_curso, instructor):
@@ -47,7 +48,10 @@ class Cursos:
         try:
             self.__nombre_curso = input("Ingrese el nombre del curso: ")
             self.__código_curso = input("Ingrese el código del curso: ")
-            self.__instructor = input("Ingrese el nombre del instructor/docente: ")
+            self.__instructor = input("Ingrese el carnet del instructor/docente: ")
+
+            if self.__código_curso in lista_cursos:
+                return "El curso ya existe"
             
             if self.__instructor in lista_docentes:
                 lista_cursos[self.__código_curso] = {
@@ -63,6 +67,24 @@ class Cursos:
         except ValueError:
             print("Los datos ingresados no son validos")
 
+#Inscribir estudiantes a cursos
+    def Inscribir(self):
+        try:
+            carnet = input("Ingrese el carnet del estudiante: ")
+            código = input("Ingrese el código del curso: ")
+
+            if carnet not in lista_estudiantes:
+                print("El estudiante no esta registrado.")
+
+            if código not in lista_cursos:
+                print("El curso no existe.")
+
+            if "estudiantes" not in lista_cursos[código]:
+                lista_cursos[código]["estudiantes"].append(carnet)
+                print(f"{lista_estudiantes[carnet]} fue inscrito en {lista_cursos[código]["Nombre Curso"]}")
+
+        except ValueError:
+            print("Los datos ingresados no son validos")
 
         
 
