@@ -1,128 +1,139 @@
-#Inicio 
+# Diccionarios para almacenar información
+lista_estudiantes = {}  # Almacena estudiantes con formato {carnet: nombre}
+lista_docentes = {}     # Almacena docentes con formato {carnet: nombre}
+lista_cursos = {}       # Almacena cursos con formato {codigo: {"Nombre Curso": nombre, "Instructor": docente, "estudiantes": []}}
 
-#Registrar Usuarios 
-
-#Registrar Estudiantes y Profesores 
-
-lista_estudiantes = {}
-lista_docentes = {}
-lista_cursos = {}
-
-#lista_cursos = {"Código Curso":{"Nombre Curso":"Instructor"}}
 
 class Registrar:
-    def __init__(self, nombre, carnet):
-        self.__nombre = nombre
-        self.__carnet = carnet
+    # Clase para registrar estudiantes y docentes en el sistema
 
     def registroEstudiante(self):
+        # Registra un estudiante solicitando nombre y carnet
+        # Almacena la información en el diccionario lista_estudiantes
         try:
-            self.__nombre = input("Ingrese su nombre y apellido: ")
-            self.__carnet = input("Ingrese su carnet: ")
-            lista_estudiantes[self.__carnet] = self.__nombre
-            print("Usuario Registrado con éxito")
+            nombre = input("Ingrese su nombre y apellido: ")
+            carnet = input("Ingrese su carnet: ")
+            lista_estudiantes[carnet] = nombre
+            print("Usuario registrado con éxito")
         except ValueError:
             print("Los valores ingresados no son correctos.")
 
     def registroDocente(self):
+        # Registra un docente solicitando nombre y carnet
+        # Almacena la información en el diccionario lista_docentes
         try:
-            self.__nombre = input("Ingrese su nombre y apellido: ")
-            self.__carnet = input("Ingrese su carnet: ")
-            lista_docentes[self.__carnet] = self.__nombre
-            print("Usuario Registrado con éxito")
-
-            
+            nombre = input("Ingrese su nombre y apellido: ")
+            carnet = input("Ingrese su carnet: ")
+            lista_docentes[carnet] = nombre
+            print("Usuario registrado con éxito")
         except ValueError:
             print("Los valores ingresados son incorrectos")
 
 
-#Cursos
-
 class Cursos:
-    def __init__(self, nombre_curso, código_curso, instructor):
-        self.__nombre_curso = nombre_curso
-        self.__código_curso = código_curso
-        self.__instructor = instructor
+    # Clase para crear cursos, inscribir estudiantes y gestionar actividades
+
+    def __init__(self):
+        # Inicializa la lista de actividades del curso
         self.actividades = []
 
-    def Crear(self):
+    def crear(self):
+        # Crea un curso solicitando nombre, código y carnet del docente
+        # Verifica que el curso y el docente existan antes de registrarlo
         try:
-            self.__nombre_curso = input("Ingrese el nombre del curso: ")
-            self.__código_curso = input("Ingrese el código del curso: ")
-            self.__instructor = input("Ingrese el carnet del instructor/docente: ")
+            nombre_curso = input("Ingrese el nombre del curso: ")
+            codigo_curso = input("Ingrese el código del curso: ")
+            carnet_docente = input("Ingrese el carnet del docente: ")
 
-            if self.__código_curso in lista_cursos:
-                return "El curso ya existe"
-            
-            if self.__instructor in lista_docentes:
-                lista_cursos[self.__código_curso] = {
-                    "Nombre curso": self.__nombre_curso,
-                    "Instructor": lista_docentes[self.__instructor]
-                }
-                print("Curso creado exitosamente")
-                print(lista_cursos)
-            else:
-                print("El docente no esta registrado")
+            if codigo_curso in lista_cursos:
+                print("El curso ya existe")
+                return
 
+            if carnet_docente not in lista_docentes:
+                print("El docente no está registrado")
+                return
 
+            lista_cursos[codigo_curso] = {
+                "Nombre Curso": nombre_curso,
+                "Instructor": lista_docentes[carnet_docente],
+                "estudiantes": []
+            }
+            print(f"Curso '{nombre_curso}' creado exitosamente")
         except ValueError:
-            print("Los datos ingresados no son validos")
+            print("Los datos ingresados no son válidos")
 
-#Inscribir estudiantes a cursos
-    def Inscribir(self):
-        try:
-            carnet = input("Ingrese el carnet del estudiante: ")
-            código = input("Ingrese el código del curso: ")
+    def inscribir(self):
+        # Inscribe un estudiante a un curso
+        # Verifica que el estudiante y el curso existan
+        # Evita inscribir al estudiante si ya está registrado en el curso
+        carnet = input("Ingrese el carnet del estudiante: ")
+        codigo_curso = input("Ingrese el código del curso: ")
 
-            if carnet not in lista_estudiantes:
-                print("El estudiante no esta registrado.")
+        if carnet not in lista_estudiantes:
+            print("El estudiante no está registrado")
+            return
 
-            if código not in lista_cursos:
-                print("El curso no existe.")
+        if codigo_curso not in lista_cursos:
+            print("El curso no existe")
+            return
 
-            if "estudiantes" not in lista_cursos[código]:
-                lista_cursos[código]["estudiantes"].append(carnet)
-                print(f"{lista_estudiantes[carnet]} fue inscrito en {lista_cursos[código]["Nombre Curso"]}")
-
-        except ValueError:
-            print("Los datos ingresados no son validos")
+        if carnet in lista_cursos[codigo_curso]["estudiantes"]:
+            print(f"{lista_estudiantes[carnet]} ya está inscrito en este curso")
+        else:
+            lista_cursos[codigo_curso]["estudiantes"].append(carnet)
+            print(f"{lista_estudiantes[carnet]} inscrito en {lista_cursos[codigo_curso]['Nombre Curso']}")
 
     def agregar_actividad(self, actividad):
+        # Agrega una actividad (Tarea o Evaluación) al curso
         self.actividades.append(actividad)
 
     def listar_actividades(self):
+        # Lista todas las actividades registradas en el curso
         if not self.actividades:
-            print("No hay actividades registradas.")
+            print("No hay actividades registradas")
         else:
             for act in self.actividades:
-                print(act.mostrar_info())
+                act.mostrar_info()
 
 
 class Actividad:
+    # Clase base para representar una actividad de un curso
+
     def __init__(self, titulo, fecha):
+        # Inicializa la actividad con un título y fecha
         self.titulo = titulo
         self.fecha = fecha
 
     def mostrar_info(self):
+        # Devuelve la información básica de la actividad
         return f"{self.titulo} - {self.fecha}"
-    
+
+
 class Tarea(Actividad):
-    def __init__(self, titulo, fecha, descripción):
+    # Subclase de Actividad que representa una tarea con descripción
+
+    def __init__(self, titulo, fecha, descripcion):
+        # Inicializa la tarea con título, fecha y descripción
         super().__init__(titulo, fecha)
-        self.descripción = descripción
+        self.descripcion = descripcion
 
     def mostrar_info(self):
-        print (f"Tarea: {self.titulo}")
-        print (f"Fecha: {self.fecha}")
-        print (f"Descripción:  {self.descripción}")
+        # Muestra la información completa de la tarea
+        print(f"Tarea: {self.titulo}")
+        print(f"Fecha: {self.fecha}")
+        print(f"Descripción: {self.descripcion}")
+
 
 class Evaluacion(Actividad):
+    # Subclase de Actividad que representa una evaluación con puntaje
+
     def __init__(self, titulo, fecha, puntaje):
+        # Inicializa la evaluación con título, fecha y puntaje máximo
         super().__init__(titulo, fecha)
         self.puntaje = puntaje
 
     def mostrar_info(self):
-        print(f"Evaluacion: {self.titulo}")
-        print("Fecha: {self.fecha}")
-        print("Puntaje: {self.puntaje}")
-    
+        # Muestra la información completa de la evaluación
+        print(f"Evaluación: {self.titulo}")
+        print(f"Fecha: {self.fecha}")
+        print(f"Puntaje: {self.puntaje}")
