@@ -1,7 +1,7 @@
 # Diccionarios para almacenar información
 lista_estudiantes = {}  # Almacena estudiantes con formato {carnet: nombre}
 lista_docentes = {}     # Almacena docentes con formato {carnet: nombre}
-lista_cursos = {}       # Almacena cursos con formato {codigo: {"Nombre Curso": nombre, "Instructor": docente, "estudiantes": []}}
+lista_cursos = {}       # Almacena cursos con formato {código: {"Nombre Curso": nombre, "Instructor": docente, "estudiantes": []}}
 
 
 class Registrar:
@@ -42,10 +42,10 @@ class Cursos:
         # Verifica que el curso y el docente existan antes de registrarlo
         try:
             nombre_curso = input("Ingrese el nombre del curso: ")
-            codigo_curso = input("Ingrese el código del curso: ")
+            código_curso = input("Ingrese el código del curso: ")
             carnet_docente = input("Ingrese el carnet del docente: ")
 
-            if codigo_curso in lista_cursos:
+            if código_curso in lista_cursos:
                 print("El curso ya existe")
                 return
 
@@ -53,7 +53,7 @@ class Cursos:
                 print("El docente no está registrado")
                 return
 
-            lista_cursos[codigo_curso] = {
+            lista_cursos[código_curso] = {
                 "Nombre Curso": nombre_curso,
                 "Instructor": lista_docentes[carnet_docente],
                 "estudiantes": []
@@ -67,21 +67,21 @@ class Cursos:
         # Verifica que el estudiante y el curso existan
         # Evita inscribir al estudiante si ya está registrado en el curso
         carnet = input("Ingrese el carnet del estudiante: ")
-        codigo_curso = input("Ingrese el código del curso: ")
+        código_curso = input("Ingrese el código del curso: ")
 
         if carnet not in lista_estudiantes:
             print("El estudiante no está registrado")
             return
 
-        if codigo_curso not in lista_cursos:
+        if código_curso not in lista_cursos:
             print("El curso no existe")
             return
 
-        if carnet in lista_cursos[codigo_curso]["estudiantes"]:
+        if carnet in lista_cursos[código_curso]["estudiantes"]:
             print(f"{lista_estudiantes[carnet]} ya está inscrito en este curso")
         else:
-            lista_cursos[codigo_curso]["estudiantes"].append(carnet)
-            print(f"{lista_estudiantes[carnet]} inscrito en {lista_cursos[codigo_curso]['Nombre Curso']}")
+            lista_cursos[código_curso]["estudiantes"].append(carnet)
+            print(f"{lista_estudiantes[carnet]} inscrito en {lista_cursos[código_curso]['Nombre Curso']}")
 
     def agregar_actividad(self, actividad):
         # Agrega una actividad (Tarea o Evaluación) al curso
@@ -112,19 +112,19 @@ class Actividad:
 class Tarea(Actividad):
     # Subclase de Actividad que representa una tarea con descripción
 
-    def __init__(self, titulo, fecha, descripcion):
+    def __init__(self, titulo, fecha, descripción):
         # Inicializa la tarea con título, fecha y descripción
         super().__init__(titulo, fecha)
-        self.descripcion = descripcion
+        self.descripción = descripción
 
     def mostrar_info(self):
         # Muestra la información completa de la tarea
         print(f"Tarea: {self.titulo}")
         print(f"Fecha: {self.fecha}")
-        print(f"Descripción: {self.descripcion}")
+        print(f"Descripción: {self.descripción}")
 
 
-class Evaluacion(Actividad):
+class Evaluación(Actividad):
     # Subclase de Actividad que representa una evaluación con puntaje
 
     def __init__(self, titulo, fecha, puntaje):
