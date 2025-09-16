@@ -43,6 +43,7 @@ class Cursos:
         self.__nombre_curso = nombre_curso
         self.__código_curso = código_curso
         self.__instructor = instructor
+        self.actividades = []
 
     def Crear(self):
         try:
@@ -86,7 +87,42 @@ class Cursos:
         except ValueError:
             print("Los datos ingresados no son validos")
 
-        
+    def agregar_actividad(self, actividad):
+        self.actividades.append(actividad)
 
-Curso1 = Cursos("", "", "")
-Curso1.Crear()
+    def listar_actividades(self):
+        if not self.actividades:
+            print("No hay actividades registradas.")
+        else:
+            for act in self.actividades:
+                print(act.mostrar_info())
+
+
+class Actividad:
+    def __init__(self, titulo, fecha):
+        self.titulo = titulo
+        self.fecha = fecha
+
+    def mostrar_info(self):
+        return f"{self.titulo} - {self.fecha}"
+    
+class Tarea(Actividad):
+    def __init__(self, titulo, fecha, descripción):
+        super().__init__(titulo, fecha)
+        self.descripción = descripción
+
+    def mostrar_info(self):
+        print (f"Tarea: {self.titulo}")
+        print (f"Fecha: {self.fecha}")
+        print (f"Descripción:  {self.descripción}")
+
+class Evaluacion(Actividad):
+    def __init__(self, titulo, fecha, puntaje):
+        super().__init__(titulo, fecha)
+        self.puntaje = puntaje
+
+    def mostrar_info(self):
+        print(f"Evaluacion: {self.titulo}")
+        print("Fecha: {self.fecha}")
+        print("Puntaje: {self.puntaje}")
+    
