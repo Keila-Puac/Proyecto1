@@ -25,8 +25,7 @@ class Estudiante:
     class SistemaAcademico:
        def __init__(self):
           self.estudiantes = []
-       def agregar_estudiante(self, estudiante):
-          self.estudiante. append(estudiante)
+
 #Funcion para agregar a un estudiante
 def agregar_estudiante(self, estudiante):
    self.estudiantes.append(estudiante)
@@ -62,3 +61,4 @@ def agregar_estudiante(self, estudiante):
                 'promedio_bajo': alerta 
             })
         return reporte
+
