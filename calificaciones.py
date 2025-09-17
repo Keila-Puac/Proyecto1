@@ -1,13 +1,16 @@
 class Estudiante:
+    #  Clase que representa a un estudiante con registro de calificaciones por curso. Permite agregar notas y calcular promedios
     def __init__(self, nombre):
      self.nombre = nombre
-     self. calificaciones =  {}
+     self. calificaciones =  {} ## Estructura: {curso: {evaluacion: nota}}
     def registrar_nota (self, curso, evaluacion, nota):
        if curso not in self.calificaciones:
           self.calificaciones[curso] ={}
           self.calificaciones[curso][evaluacion]=nota
 #Funcion promedio
-    def promedio_curso(self, curso):
+    def promedio_curso(self, curso): #Calcular el promedio de odas las notas de un curso.
+     # Args: curso (str): Nombre dell curso
+     # None: si no hay calificaciones para el curso 
      if curso in self.calificaciones and self.calificaciones[curso]:
         notas = self.calificaciones[curso ].values()
         return  sum(notas) / len (notas)
