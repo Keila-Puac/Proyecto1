@@ -22,25 +22,20 @@ class Estudiante:
 
 # clase Sitema Academico para  consultar el promedio del estudiante y su rendimiento
 
-    class SistemaAcademico:
-       def __init__(self):
+class SistemaAcademico:
+    def __init__(self):
           self.estudiantes = []
 
 #Funcion para agregar a un estudiante
-def agregar_estudiante(self, estudiante):
-   self.estudiantes.append(estudiante)
+    def agregar_estudiante(self, estudiante):
+            self.estudiantes.append(estudiante)
 
+    #Funcion que devuelve una lista de estudiantes 
+    def listar_estudiantes(self):
+            return [est.nombre for est in self.estudiantes]
+    #Funcion para consultar al estudiante y su respectivo promedio
 
-
-
-
-
- #Funcion que devuelve una lista de estudiantes 
-       def listar_estudiantes(self):
-        return [est.nombre for est in self.estudiantes]
-   #Funcion para consultar al estudiante y su respectivo promedio
-
-       def consultar_curso(self, curso):
+    def consultar_curso(self, curso):
         """Devuelve las evaluaciones y calificaciones de todos los estudiantes en un curso"""
         resultado = {}
         for estudiante in self.estudiantes:
@@ -49,7 +44,7 @@ def agregar_estudiante(self, estudiante):
         return resultado
 
    # funcion para reporte de promedios
-       def reporte_promedios(self, promedio_bajo=70):
+    def reporte_promedios(self, promedio_bajo=70):
         """Genera un reporte simple con promedios y alerta de promedio bajo"""
         reporte = []
         for estudiante in self.estudiantes:
