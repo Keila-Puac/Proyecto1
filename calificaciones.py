@@ -19,5 +19,32 @@ class Estudiante:
           return 0 # si no cuenta con cursos o con un promediode 0
        total= sum(self.promedio_curso(curso) for curso in self.calificaciones)
        return total / len (self.calificaciones)
+
+# clase Sitema Academico para  consultar el promedio del estudiante y su rendimiento
+
+    class Sistem_Academico:
+       def __init__(self):
+          self.estudiantes = []
+       def agregar_estudiante(self, estudiante):
+          self.estudiante. append(estudiante)
+#Funcion para agregar a un estudiante
+def agregar_estudiante(self, estudiante):
+   self.estudiantes.append(estudiante)
+   #Funcion para consultar al estudiante y su respectivo promedio
+
+def consultar_estudiantes(self):
+   lista_nombres = []
+   for estudiante in self.estudiantes:
+      lista_nombres.append(estudiante.nombre)
+      return lista_nombres
+   # funcion para reporte de promedios
+   def reporte_promedios(self):
+      lista_reporte =[]
+      for estudiante in self.estudiantes:
+         lista_reporte.append((estudiante.nombre, estudiante.promedio_general()))
+         return lista_reporte
+      
+
     
+
 
