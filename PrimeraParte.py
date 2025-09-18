@@ -309,3 +309,154 @@ class SistemaAcademico:
         except Exception as e:
             print(f"Error al generar reporte de promedios: {e}")
             return []
+
+def menu_inicio(sistema: SistemaAcademico):
+    usuario_actual = None
+
+    while not usuario_actual:
+        print("\n=== INICIO DE SESIÓN ===")
+        print("1. Registrarse")
+        print("2. Iniciar sesión")
+        print("0. Salir")
+
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == "1":
+            tipo = input("Tipo (estudiante/instructor): ").strip().lower()
+            nombre = input("Nombre: ")
+            carnet = input("Carnet: ")
+            usuario = sistema.registrar_usuario(tipo, nombre=nombre, carnet=carnet)
+            if usuario:
+                print("Registro exitoso. Ahora puede iniciar sesión.")
+        elif opcion == "2":
+            carnet = input("Ingrese su carnet: ")
+            usuario_actual = sistema.usuarios.get(carnet)
+            if not usuario_actual:
+                print("Usuario no encontrado, regístrese primero.")
+                usuario_actual = None
+        elif opcion == "0":
+            print("Saliendo...")
+            exit()
+        else:
+            print("Opción inválida.")
+
+    return usuario_actual
+
+
+def menu_academico(sistema: SistemaAcademico, usuario_actual: Usuario):
+    while True:
+        print(f"\n=== MENÚ ACADÉMICO ({usuario_actual.nombre}) ===")
+        print("1. Ver cursos disponibles")
+        if isinstance(usuario_actual, Instructor):
+            print("2. Crear curso")
+            print("3. Inscribir estudiante en curso")
+            print("4. Crear tarea/evaluación")
+            print("5. Registrar calificación")
+        elif isinstance(usuario_actual, Estudiante):
+            print("2. Ver mis cursos inscritos")
+            print("3. Ver mis calificaciones")
+        print("6. Generar reporte de promedios")
+        print("9. Cerrar sesión")
+
+        opcion = input("Seleccione: ")
+
+        # --- Opciones comunes ---
+        if opcion == "1":
+            for curso in sistema.cursos.values():
+                print(f"{curso.codigo} - {curso.nombre} (Instructor: {curso.instructor.nombre})")
+
+        elif opcion == "6":
+            reporte = sistema.reporte_promedios()
+            for r in reporte:
+                estado = "Bajo rendimiento" if r["promedio_bajo"] else "Aceptable"
+                print(f"{r['nombre']} - Promedio: {r['promedio']:.2f} {estado}")
+
+        elif opcion == "9":
+            print("Cerrando sesión...")
+            break
+
+        # --- Opciones de instructor ---
+        elif isinstance(usuario_actual, Instructor):
+            if opcion == "2":
+                nombre = input("Nombre del curso: ")
+                codigo = input("Código del curso: ")
+                sistema.crear_curso(nombre, codigo, usuario_actual.carnet)
+
+            elif opcion == "3":
+                codigo = input("Código del curso: ")
+                carnet_est = input("Carnet del estudiante: ")
+                curso = sistema.cursos.get(codigo)
+                estudiante = sistema.usuarios.get(carnet_est)
+                if curso and isinstance(estudiante, Estudiante):
+                    curso.inscribir_estudiante(estudiante)
+                else:
+                    print("Error: curso o estudiante no encontrado.")
+
+            elif opcion == "4":
+                codigo = input("Código del curso: ")
+                curso = sistema.cursos.get(codigo)
+                if not curso:
+                    print("Curso no encontrado.")
+                    continue
+
+                tipo = input("¿Desea crear (tarea/evaluacion)? ").strip().lower()
+                titulo = input("Título: ")
+                fecha = input("Fecha (dd/mm/aaaa): ")
+
+                if tipo == "tarea":
+                    descripcion = input("Descripción: ")
+                    tarea = Tarea(titulo, fecha, descripcion)
+                    curso.agregar_actividad(tarea)
+                elif tipo == "evaluacion":
+                    puntaje = float(input("Puntaje total: "))
+                    evaluacion = Evaluacion(titulo, fecha, puntaje)
+                    curso.agregar_actividad(evaluacion)
+                else:
+                    print("Opción inválida.")
+
+            elif opcion == "5":
+                carnet_est = input("Carnet del estudiante: ")
+                codigo = input("Código del curso: ")
+                titulo = input("Título de la evaluación: ")
+                nota = float(input("Nota obtenida: "))
+
+                estudiante = sistema.usuarios.get(carnet_est)
+                if isinstance(estudiante, Estudiante):
+                    estudiante.registrar_nota(codigo, titulo, nota)
+                    print("Nota registrada con éxito.")
+                else:
+                    print("Estudiante no encontrado.")
+
+        # --- Opciones de estudiante ---
+        elif isinstance(usuario_actual, Estudiante):
+            if opcion == "2":
+                cursos_inscritos = [curso for curso in sistema.cursos.values() if usuario_actual.carnet in curso.estudiantes]
+                if cursos_inscritos:
+                    for c in cursos_inscritos:
+                        print(f"{c.codigo} - {c.nombre}")
+                else:
+                    print("No está inscrito en ningún curso.")
+
+            elif opcion == "3":
+                if usuario_actual.calificaciones:
+                    for curso, evals in usuario_actual.calificaciones.items():
+                        print(f"\nCurso {curso}:")
+                        for titulo, datos in evals.items():
+                            print(f"  {titulo}: {datos['nota']}")
+                    print(f"\nPromedio general: {usuario_actual.promedio_general():.2f}")
+                else:
+                    print("No tiene calificaciones registradas.")
+
+        else:
+            print("Opción inválida.")
+
+
+def main():
+    sistema = SistemaAcademico()
+    while True:
+        usuario_actual = menu_inicio(sistema)
+        menu_academico(sistema, usuario_actual)
+
+
+if __name__ == "__main__":
+    main()
