@@ -356,7 +356,7 @@ def menu_academico(sistema: SistemaAcademico, usuario_actual: Usuario):
             print("2. Ver mis cursos inscritos")
             print("3. Ver mis calificaciones")
         print("6. Generar reporte de promedios")
-        print("9. Cerrar sesión")
+        print("0. Cerrar sesión")
 
         opcion = input("Seleccione: ")
 
@@ -371,7 +371,7 @@ def menu_academico(sistema: SistemaAcademico, usuario_actual: Usuario):
                 estado = "Bajo rendimiento" if r["promedio_bajo"] else "Aceptable"
                 print(f"{r['nombre']} - Promedio: {r['promedio']:.2f} {estado}")
 
-        elif opcion == "9":
+        elif opcion == "0":
             print("Cerrando sesión...")
             break
 
