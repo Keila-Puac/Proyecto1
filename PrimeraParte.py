@@ -1,24 +1,38 @@
 class Usuario:
-    """Clase base para todos los usuarios del sistema"""
+    """
+    Clase base para todos los usuarios del sistema académico.
+
+    Atributos:
+        nombre (str): Nombre del usuario.
+        carnet (str): Identificador único del usuario.
+    """
     def __init__(self, nombre, carnet):
-        # Atributos comunes a todos los usuarios
         self.nombre = nombre
         self.carnet = carnet
 
 
 class Estudiante(Usuario):
-    """Subclase que representa a un estudiante"""
+    """
+    Representa a un estudiante dentro del sistema.
+
+    Atributos:
+        calificaciones (dict): Estructura que almacena las notas de cada curso.
+                               {codigo_curso: {titulo_evaluacion: {"nota": valor, "extra": info}}}
+    """
     def __init__(self, nombre, carnet):
         super().__init__(nombre, carnet)
-        # Diccionario para almacenar las calificaciones
-        # Estructura: {codigo_curso: {titulo_evaluacion: nota}}
         self.calificaciones = {}
 
     def registrar_nota(self, curso_codigo, evaluacion_titulo, nota, *args, **kwargs):
         """
         Registra o actualiza la nota de un estudiante en un curso específico.
-        *args y **kwargs permiten flexibilidad, por ejemplo:
-        registrar_nota("MAT101", "Parcial 1", 85, comentario="Bien hecho")
+
+        Args:
+            curso_codigo (str): Código del curso.
+            evaluacion_titulo (str): Nombre de la evaluación (ej. "Parcial 1").
+            nota (int/float): Nota obtenida.
+            *args: Argumentos adicionales (no obligatorios).
+            **kwargs: Información extra (ejemplo: comentario="Buen trabajo").
         """
         try:
             if not isinstance(nota, (int, float)):
@@ -29,13 +43,21 @@ class Estudiante(Usuario):
 
             self.calificaciones[curso_codigo][evaluacion_titulo] = {
                 "nota": nota,
-                "extra": kwargs  # Guarda información extra opcional
+                "extra": kwargs
             }
         except Exception as e:
             print(f"Error al registrar la nota: {e}")
 
     def promedio_curso(self, curso_codigo):
-        """Calcula el promedio de un curso específico"""
+        """
+        Calcula el promedio de un curso específico.
+
+        Args:
+            curso_codigo (str): Código del curso.
+
+        Returns:
+            float | None: Promedio del curso o None si no hay notas.
+        """
         try:
             if curso_codigo in self.calificaciones and self.calificaciones[curso_codigo]:
                 notas = [data["nota"] for data in self.calificaciones[curso_codigo].values()]
@@ -46,7 +68,12 @@ class Estudiante(Usuario):
             return None
 
     def promedio_general(self):
-        """Calcula el promedio general de todas las asignaturas"""
+        """
+        Calcula el promedio general del estudiante en todos los cursos.
+
+        Returns:
+            float: Promedio general (0 si no hay calificaciones).
+        """
         try:
             if not self.calificaciones:
                 return 0
@@ -62,24 +89,41 @@ class Estudiante(Usuario):
 
 
 class Instructor(Usuario):
-    """Subclase que representa a un instructor"""
+    """
+    Representa a un instructor del sistema.
+
+    Atributos:
+        cursos (list): Lista de códigos de cursos que imparte.
+    """
     def __init__(self, nombre, carnet):
         super().__init__(nombre, carnet)
-        # Lista de cursos que imparte el instructor
         self.cursos = []
 
+
 class Actividad:
-    """Clase base para actividades de un curso"""
+    """
+    Clase base para actividades de un curso (ejemplo: Tarea, Evaluación).
+
+    Atributos:
+        titulo (str): Nombre de la actividad.
+        fecha (str): Fecha de entrega/realización.
+    """
     def __init__(self, titulo, fecha):
         self.titulo = titulo
         self.fecha = fecha
 
     def mostrar_info(self):
+        """Devuelve una cadena con la información de la actividad."""
         return f"{self.titulo} - {self.fecha}"
 
 
 class Tarea(Actividad):
-    """Subclase que representa una tarea"""
+    """
+    Representa una tarea asignada a un curso.
+
+    Atributos:
+        descripcion (str): Detalle de la tarea.
+    """
     def __init__(self, titulo, fecha, descripcion):
         super().__init__(titulo, fecha)
         self.descripcion = descripcion
@@ -89,7 +133,12 @@ class Tarea(Actividad):
 
 
 class Evaluacion(Actividad):
-    """Subclase que representa una evaluación"""
+    """
+    Representa una evaluación de un curso (ejemplo: examen, parcial).
+
+    Atributos:
+        puntaje (int/float): Valor total de la evaluación.
+    """
     def __init__(self, titulo, fecha, puntaje):
         super().__init__(titulo, fecha)
         self.puntaje = puntaje
@@ -99,18 +148,32 @@ class Evaluacion(Actividad):
 
 
 class Curso:
-    """Clase que representa un curso"""
+    """
+    Representa un curso dentro del sistema.
+
+    Atributos:
+        nombre (str): Nombre del curso.
+        codigo (str): Código único del curso.
+        instructor (Instructor): Instructor asignado.
+        estudiantes (dict): Estudiantes inscritos {carnet: Estudiante}.
+        actividades (list): Lista de actividades del curso.
+    """
     def __init__(self, nombre, codigo, instructor: Instructor):
         self.nombre = nombre
         self.codigo = codigo
         self.instructor = instructor
-        self.estudiantes = {}   # {carnet: Estudiante}
-        self.actividades = []   # Lista de actividades
+        self.estudiantes = {}
+        self.actividades = []
 
         instructor.cursos.append(codigo)
 
     def inscribir_estudiante(self, estudiante: Estudiante):
-        """Agrega un estudiante al curso"""
+        """
+        Inscribe un estudiante en el curso.
+
+        Args:
+            estudiante (Estudiante): Objeto estudiante a inscribir.
+        """
         try:
             if estudiante.carnet not in self.estudiantes:
                 self.estudiantes[estudiante.carnet] = estudiante
@@ -121,14 +184,19 @@ class Curso:
             print(f"Error al inscribir estudiante: {e}")
 
     def agregar_actividad(self, actividad: Actividad):
-        """Agrega una actividad (tarea o evaluación)"""
+        """
+        Agrega una actividad (Tarea o Evaluación) al curso.
+
+        Args:
+            actividad (Actividad): Objeto de tipo Tarea o Evaluacion.
+        """
         try:
             self.actividades.append(actividad)
         except Exception as e:
             print(f"Error al agregar actividad: {e}")
 
     def listar_actividades(self):
-        """Lista todas las actividades registradas"""
+        """Muestra todas las actividades registradas del curso."""
         try:
             if not self.actividades:
                 print("No hay actividades registradas")
@@ -137,20 +205,32 @@ class Curso:
                     act.mostrar_info()
         except Exception as e:
             print(f"Error al listar actividades: {e}")
-            
+
+
 class SistemaAcademico:
-    """Clase que gestiona todo el sistema académico"""
+    """
+    Clase principal que gestiona el sistema académico completo.
+
+    Atributos:
+        usuarios (dict): Diccionario de usuarios registrados {carnet: Usuario}.
+        cursos (dict): Diccionario de cursos {codigo: Curso}.
+    """
     def __init__(self):
-        self.usuarios = {}  # {carnet: Usuario}
-        self.cursos = {}    # {codigo: Curso}
+        self.usuarios = {}
+        self.cursos = {}
 
     # --------- Registro de usuarios ---------
     def registrar_usuario(self, tipo, *args, **kwargs):
         """
-        Registra un nuevo usuario (estudiante o instructor).
-        Uso flexible gracias a *args y **kwargs:
-        registrar_usuario("estudiante", "Ana", "2025001")
-        registrar_usuario("instructor", nombre="Carlos", carnet="INS101")
+        Registra un nuevo usuario en el sistema.
+
+        Args:
+            tipo (str): "estudiante" o "instructor".
+            *args: Argumentos posicionales (ejemplo: nombre, carnet).
+            **kwargs: Argumentos con nombre (ejemplo: nombre="Ana", carnet="2025001").
+
+        Returns:
+            Usuario | None: El objeto creado o None si hay error.
         """
         try:
             nombre = kwargs.get("nombre", args[0] if args else None)
@@ -176,7 +256,17 @@ class SistemaAcademico:
 
     # --------- Gestión de cursos ---------
     def crear_curso(self, nombre, codigo, carnet_instructor, **kwargs):
-        """Crea un curso nuevo y lo asocia a un instructor"""
+        """
+        Crea un curso nuevo y lo asigna a un instructor.
+
+        Args:
+            nombre (str): Nombre del curso.
+            codigo (str): Código único del curso.
+            carnet_instructor (str): Carnet del instructor.
+
+        Returns:
+            Curso | None: El curso creado o None si hay error.
+        """
         try:
             if codigo in self.cursos:
                 raise ValueError("El curso ya existe.")
@@ -194,7 +284,16 @@ class SistemaAcademico:
 
     # --------- Reportes ---------
     def reporte_promedios(self, promedio_bajo=70):
-        """Genera un reporte de promedios de todos los estudiantes y alerta si es bajo"""
+        """
+        Genera un reporte de promedios de todos los estudiantes.
+
+        Args:
+            promedio_bajo (int): Umbral mínimo para considerar bajo rendimiento.
+
+        Returns:
+            list[dict]: Lista con reportes de estudiantes:
+                        {"nombre": str, "promedio": float, "promedio_bajo": bool}
+        """
         try:
             reporte = []
             for usuario in self.usuarios.values():
@@ -210,4 +309,3 @@ class SistemaAcademico:
         except Exception as e:
             print(f"Error al generar reporte de promedios: {e}")
             return []
-
